@@ -82,7 +82,6 @@
       gap: 4px;
     }
 
-    /* URL Box */
     .url-card {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
@@ -110,7 +109,6 @@
       text-overflow: ellipsis;
     }
 
-    /* Threat Meter & Gauge */
     .meter-card {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
@@ -162,7 +160,6 @@
       color: var(--text-muted);
     }
 
-    /* Plain English XAI Cards */
     .xai-section {
       margin-bottom: 14px;
     }
@@ -211,7 +208,6 @@
       background: var(--safe-bg);
     }
 
-    /* Feature Breakdown Progress Bars */
     .feature-bars {
       display: flex;
       flex-direction: column;
@@ -251,7 +247,6 @@
       transition: width 0.6s ease;
     }
 
-    /* Buttons & Audio Alert */
     .action-btn {
       width: 100%;
       padding: 10px;
@@ -282,7 +277,6 @@
   </style>
 </head>
 <body>
-  <!-- Header -->
   <div class="header">
     <div class="brand">
       <div class="brand-icon">🛡️</div>
@@ -293,13 +287,11 @@
     </div>
   </div>
 
-  <!-- Active Tab URL -->
   <div class="url-card">
     <div class="url-label">Analyzing Target URL</div>
     <div class="url-text" id="target-url">Loading page URL...</div>
   </div>
 
-  <!-- Threat Gauge Meter -->
   <div class="meter-card">
     <div class="score-circle" id="score-circle">
       <div class="score-num" id="score-num">--</div>
@@ -309,7 +301,6 @@
     <div class="latency-tag" id="latency-tag">⚡ In-browser ML WASM Execution</div>
   </div>
 
-  <!-- Plain-English XAI Explanations -->
   <div class="xai-section">
     <div class="section-header">
       <span>💡 Plain-English Explainable AI (XAI)</span>
@@ -323,7 +314,6 @@
     </div>
   </div>
 
-  <!-- Feature Importance Visual Bars -->
   <div class="section-header">
     <span>📊 Feature Impact Matrix</span>
   </div>
@@ -350,7 +340,6 @@
     </div>
   </div>
 
-  <!-- Audio Accessibility Button -->
   <button class="action-btn" id="audio-btn">
     🔊 Read Warning Aloud (Voice Alert)
   </button>
