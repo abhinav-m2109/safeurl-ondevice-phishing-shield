@@ -119,15 +119,6 @@ Activate your Python virtual environment and run the training script:
 
 ---
 
-## 🎤 Viva Presentation & Project Defense Pitch
-
-### Opening Presentation Script for Evaluators:
-> *"Respected Evaluators, cyber fraud accounts for over $7.7 Billion in financial theft targeting non-technical and elderly citizens every year. Most security solutions act as black boxes—giving users opaque percentage scores without explaining why a site is unsafe, while violating user privacy by transmitting clicked links to remote cloud servers.*
->
-> *Our project, **SafeURL**, solves this with a **Privacy-First, On-Device AI Architecture**. Powered by WebAssembly and TreeSHAP Explainable AI, SafeURL executes Random Forest feature extraction and model inference directly inside the user's browser in under 10 milliseconds with zero network traffic. It converts mathematical feature weights into human-readable Plain-English explanation cards and voice alerts, shielding non-technical users from bankruptcy without compromising their browsing privacy."*
-
----
-
 ## 🌐 Pushing Project to GitHub
 
 To upload this repository to your GitHub account:
