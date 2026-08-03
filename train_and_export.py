@@ -4,7 +4,6 @@ import json
 import math
 import re
 
-# Ensure UTF-8 output encoding for Windows PowerShell console
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
  
@@ -16,10 +15,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 import skl2onnx
 from skl2onnx.common.data_types import FloatTensorType
-
-# ---------------------------------------------------------
-# 1. Feature Extraction Logic (Identical to JavaScript)
-# ---------------------------------------------------------
 SUSPICIOUS_KEYWORDS = [
     'login', 'signin', 'verify', 'verif', 'bank', 'secure', 'account',
     'update', 'confirm', 'paypal', 'apple', 'google', 'microsoft',
@@ -52,25 +47,20 @@ def extract_features(url_string):
     at_symbol = 1.0 if '@' in url_string else 0.0
     is_https = 1.0 if url_lower.startswith('https://') else 0.0
     
-    # Raw IP check
     ip_pattern = r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$'
     clean_host = hostname.split(':')[0]
     is_ip_address = 1.0 if re.match(ip_pattern, clean_host) else 0.0
     
-    # Subdomain count
     subdomains = clean_host.split('.')
     if is_ip_address:
         subdomain_count = 0.0
     else:
         subdomain_count = float(max(0, len(subdomains) - 2))
         
-    # Suspicious keyword count
     keyword_count = float(sum(1 for kw in SUSPICIOUS_KEYWORDS if kw in url_lower))
     
-    # Digit count
     digit_count = float(sum(1 for c in url_string if c.isdigit()))
     
-    # Entropy
     url_entropy = calculate_entropy(url_string)
     
     return [
@@ -98,10 +88,6 @@ FEATURE_NAMES = [
     "digit_count",
     "url_entropy"
 ]
-
-# ---------------------------------------------------------
-# 2. Synthetic Dataset Generation
-# ---------------------------------------------------------
 def generate_dataset(n_samples=2400):
     np.random.seed(42)
     
@@ -122,7 +108,6 @@ def generate_dataset(n_samples=2400):
 
     data = []
 
-    # Generate Safe URLs
     for _ in range(n_samples // 2):
         domain = np.random.choice(safe_domains)
         path = np.random.choice(safe_paths)
@@ -132,7 +117,6 @@ def generate_dataset(n_samples=2400):
         feats = extract_features(url)
         data.append(feats + [0]) # 0 = Safe
 
-    # Generate Phishing URLs
     for _ in range(n_samples // 2):
         mode = np.random.choice(["typo", "ip", "subdomain_spoof", "keyword_stuffing"])
         protocol = "http://" if np.random.rand() > 0.3 else "https://"
@@ -150,7 +134,7 @@ def generate_dataset(n_samples=2400):
             target = np.random.choice(phish_targets)
             typo_domain = target.replace('o', '0').replace('l', '1').replace('e', '3') + np.random.choice(phish_tlds)
             url = f"{protocol}{typo_domain}/verify-banking-account"
-        else: # keyword_stuffing
+        else: 
             target = np.random.choice(phish_targets)
             kw1 = np.random.choice(phish_keywords)
             kw2 = np.random.choice(phish_keywords)
@@ -160,14 +144,11 @@ def generate_dataset(n_samples=2400):
             url += f"@malicious-user:{np.random.randint(100,999)}"
             
         feats = extract_features(url)
-        data.append(feats + [1]) # 1 = Phishing
+        data.append(feats + [1]) 
 
     df = pd.DataFrame(data, columns=FEATURE_NAMES + ['label'])
     return df
 
-# ---------------------------------------------------------
-# 3. Model Training & Export
-# ---------------------------------------------------------
 def train_and_export():
     print("🔄 Generating synthetic dataset...")
     df = generate_dataset(2400)
@@ -187,7 +168,6 @@ def train_and_export():
     print(f"⚡ Recall:    {recall_score(y_test, y_pred)*100:.2f}%")
     print(f"🏆 F1 Score:  {f1_score(y_test, y_pred)*100:.2f}%")
 
-    # Export ONNX
     print("📦 Exporting model to ONNX format...")
     initial_type = [('float_input', FloatTensorType([None, len(FEATURE_NAMES)]))]
     onnx_model = skl2onnx.convert_sklearn(model, initial_types=initial_type, target_opset=12)
@@ -196,10 +176,8 @@ def train_and_export():
         f.write(onnx_model.SerializeToString())
     print("✅ Successfully exported model.onnx!")
 
-    # Calculate Feature Importances & Config for Local XAI Engine
     feature_importances = model.feature_importances_.tolist()
     
-    # Calculate baseline mean values for safe vs phishing
     safe_means = X[y == 0].mean().to_dict()
     phish_means = X[y == 1].mean().to_dict()
 
@@ -252,9 +230,6 @@ def train_and_export():
         json.dump(xai_config, f, indent=2)
     print("✅ Successfully exported xai_config.json!")
 
-# ---------------------------------------------------------
-# 4. Generate Extension Icons
-# ---------------------------------------------------------
 def generate_icons():
     print("🎨 Generating extension PNG icons...")
     os.makedirs("icons", exist_ok=True)
@@ -264,16 +239,12 @@ def generate_icons():
         img = Image.new('RGBA', (size, size), (0, 0, 0, 0))
         draw = ImageDraw.Draw(img)
         
-        # Draw shield background (Shield blue/cyan gradient effect)
         padding = max(1, size // 10)
         draw.ellipse([padding, padding, size - padding, size - padding], fill=(14, 165, 233, 255))
         
-        # Inner shield outline
         draw.ellipse([padding+2, padding+2, size - padding - 2, size - padding - 2], outline=(255, 255, 255, 220), width=max(1, size // 20))
         
-        # Checkmark/Lock symbol
         if size >= 48:
-            # Draw checkmark
             points = [
                 (int(size * 0.3), int(size * 0.5)),
                 (int(size * 0.45), int(size * 0.65)),
