@@ -8,7 +8,6 @@ let currentAnalysisResult = null;
 document.addEventListener('DOMContentLoaded', async () => {
   const startTime = performance.now();
   
-  // 1. Query Active Tab URL
   let activeUrl = "https://google.com";
   try {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -19,14 +18,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.log("Running in standalone/test mode:", e);
   }
 
-  // Display URL
   document.getElementById("target-url").innerText = activeUrl;
   document.getElementById("target-url").title = activeUrl;
 
-  // 2. Extract Features On-Device
   const features = extractURLFeatures(activeUrl);
 
-  // 3. Load XAI Config & Calculate Prediction
   let xaiConfig = null;
   try {
     const response = await fetch('xai_config.json');
@@ -35,20 +31,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.warn("Could not load xai_config.json locally:", e);
   }
 
-  // Calculate ML Probability (using local WASM/decision tree weighting)
   const predictionProb = computeInferenceProbability(features, xaiConfig);
 
-  // 4. Generate XAI Explanations
   const xaiResult = generateXAIExplanation(features, predictionProb, xaiConfig);
   currentAnalysisResult = { url: activeUrl, ...xaiResult };
 
   const endTime = performance.now();
   const latencyMs = (endTime - startTime).toFixed(1);
 
-  // 5. Render Popup UI
   renderUI(xaiResult, latencyMs);
 
-  // 6. Setup Audio TTS Button
   document.getElementById("audio-btn").addEventListener("click", () => {
     speakWarning(xaiResult);
   });
@@ -87,7 +79,6 @@ function renderUI(result, latencyMs) {
   const latencyTag = document.getElementById("latency-tag");
   const xaiList = document.getElementById("xai-list");
 
-  // Update Score & Meter Colors
   scoreNum.innerText = result.riskScore;
   statusTitle.innerText = result.statusText;
   latencyTag.innerText = `⚡ On-Device WASM Latency: ${latencyMs} ms`;
@@ -109,7 +100,6 @@ function renderUI(result, latencyMs) {
     statusTitle.style.color = "#10B981";
   }
 
-  // Render Plain-English Cards
   let html = "";
   if (result.explanations && result.explanations.length > 0) {
     result.explanations.forEach(exp => {
@@ -137,7 +127,6 @@ function renderUI(result, latencyMs) {
 
   xaiList.innerHTML = html;
 
-  // Render Feature Bars
   if (result.featureBreakdown) {
     result.featureBreakdown.forEach((item, index) => {
       const valEl = document.getElementById(`v${index}`);
@@ -162,7 +151,7 @@ function speakWarning(result) {
     return;
   }
 
-  window.speechSynthesis.cancel(); // Stop ongoing speech
+  window.speechSynthesis.cancel(); 
 
   let text = `Security analysis report. `;
   if (result.riskScore >= 70) {
@@ -181,7 +170,7 @@ function speakWarning(result) {
   }
 
   const utterance = new SpeechSynthesisUtterance(text);
-  utterance.rate = 0.95; // Slightly slower for non-technical users
+  utterance.rate = 0.95;
   utterance.pitch = 1.0;
   window.speechSynthesis.speak(utterance);
 }
