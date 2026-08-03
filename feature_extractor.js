@@ -41,33 +41,25 @@ function extractURLFeatures(urlString) {
   }
   const cleanHost = hostname.split(':')[0];
 
-  // 1. Length of URL
   const urlLength = parseFloat(urlString.length);
 
-  // 2. Count of dots
   const dotCount = parseFloat((urlString.match(/\./g) || []).length);
 
-  // 3. Count of hyphens
   const hyphenCount = parseFloat((urlString.match(/-/g) || []).length);
 
-  // 4. Presence of '@'
   const atSymbol = urlString.includes('@') ? 1.0 : 0.0;
 
-  // 5. HTTPS flag
   const isHttps = urlLower.startsWith("https://") ? 1.0 : 0.0;
 
-  // 6. IP in hostname
   const ipRegex = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
   const isIpAddress = ipRegex.test(cleanHost) ? 1.0 : 0.0;
 
-  // 7. Subdomain count
   let subdomainCount = 0.0;
   if (!isIpAddress) {
     const parts = cleanHost.split('.');
     subdomainCount = parseFloat(Math.max(0, parts.length - 2));
   }
 
-  // 8. Suspicious keyword count
   let suspiciousKeywords = 0.0;
   for (const kw of SUSPICIOUS_KEYWORDS) {
     if (urlLower.includes(kw)) {
@@ -75,10 +67,8 @@ function extractURLFeatures(urlString) {
     }
   }
 
-  // 9. Digit count
   const digitCount = parseFloat((urlString.match(/\d/g) || []).length);
 
-  // 10. Shannon Entropy
   const urlEntropy = calculateEntropy(urlString);
 
   return [
@@ -95,7 +85,6 @@ function extractURLFeatures(urlString) {
   ];
 }
 
-// Export for ES Module or browser script window
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { extractURLFeatures, calculateEntropy };
 }
