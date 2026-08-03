@@ -1,0 +1,88 @@
+{
+  "feature_names": [
+    "url_length",
+    "dot_count",
+    "hyphen_count",
+    "at_symbol",
+    "is_https",
+    "is_ip_address",
+    "subdomain_count",
+    "suspicious_keywords",
+    "digit_count",
+    "url_entropy"
+  ],
+  "feature_importances": [
+    0.17989988386955463,
+    0.013274006727250317,
+    0.37867664400112255,
+    0.0,
+    0.03629523402496492,
+    0.0011668533043486754,
+    0.010887223667463655,
+    0.12102022516997044,
+    0.026542276782676944,
+    0.23223765245264774
+  ],
+  "safe_baselines": {
+    "url_length": 32.35583333333334,
+    "dot_count": 1.8033333333333332,
+    "hyphen_count": 0.0,
+    "at_symbol": 0.0,
+    "is_https": 0.9491666666666667,
+    "is_ip_address": 0.0,
+    "subdomain_count": 0.8033333333333333,
+    "suspicious_keywords": 0.5333333333333333,
+    "digit_count": 0.7666666666666667,
+    "url_entropy": 3.9419586958373074
+  },
+  "phish_baselines": {
+    "url_length": 71.28333333333333,
+    "dot_count": 2.7783333333333333,
+    "hyphen_count": 4.033333333333333,
+    "at_symbol": 0.285,
+    "is_https": 0.31083333333333335,
+    "is_ip_address": 0.245,
+    "subdomain_count": 0.8,
+    "suspicious_keywords": 4.1325,
+    "digit_count": 6.163333333333333,
+    "url_entropy": 4.5266972804164975
+  },
+  "rules": {
+    "is_ip_address": {
+      "weight": 0.25,
+      "label": "Uses Raw IP Address",
+      "danger_msg": "Destination uses an IP address instead of a domain name.",
+      "safe_msg": "Uses standard domain name registration."
+    },
+    "is_https": {
+      "weight": 0.2,
+      "label": "HTTPS Encryption",
+      "danger_msg": "Unencrypted connection (HTTP). Bank/login details can be stolen.",
+      "safe_msg": "Encrypted HTTPS connection established."
+    },
+    "suspicious_keywords": {
+      "weight": 0.18,
+      "label": "Phishing Trigger Keywords",
+      "danger_msg": "Contains multiple financial/login urgency keywords.",
+      "safe_msg": "No suspicious keywords detected in link structure."
+    },
+    "subdomain_count": {
+      "weight": 0.15,
+      "label": "Subdomain Hierarchy",
+      "danger_msg": "Excessive subdomain layering to spoof brand names.",
+      "safe_msg": "Clean, standard domain hierarchy."
+    },
+    "url_entropy": {
+      "weight": 0.12,
+      "label": "Character Randomness (Entropy)",
+      "danger_msg": "High character entropy indicating auto-generated phishing string.",
+      "safe_msg": "Normal character distribution."
+    },
+    "at_symbol": {
+      "weight": 0.1,
+      "label": "@ Symbol Redirect",
+      "danger_msg": "Contains '@' character to trick browser into domain redirect.",
+      "safe_msg": "Standard URL path syntax."
+    }
+  }
+}

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeURL Shield</title>
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --border-color: rgba(255, 255, 255, 0.1);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --safe-green: #10b981;
+      --safe-bg: rgba(16, 185, 129, 0.15);
+      --warn-yellow: #f59e0b;
+      --warn-bg: rgba(245, 158, 11, 0.15);
+      --danger-red: #ef4444;
+      --danger-bg: rgba(239, 68, 68, 0.15);
+      --primary-cyan: #06b6d4;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      width: 360px;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      padding: 16px;
+      overflow-x: hidden;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 14px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-icon {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .brand-title {
+      font-size: 15px;
+      font-weight: 700;
+      background: linear-gradient(90deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .privacy-badge {
+      background: rgba(6, 182, 212, 0.12);
+      color: #38bdf8;
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* URL Box */
+    .url-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 14px;
+      backdrop-filter: blur(8px);
+    }
+
+    .url-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .url-text {
+      font-size: 12px;
+      color: #e2e8f0;
+      word-break: break-all;
+      font-family: monospace;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Threat Meter & Gauge */
+    .meter-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      margin-bottom: 14px;
+      position: relative;
+    }
+
+    .score-circle {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      margin: 0 auto 10px auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle, rgba(15,23,42,0.8) 0%, rgba(30,41,59,0.9) 100%);
+      border: 4px solid var(--safe-green);
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+      transition: all 0.4s ease;
+    }
+
+    .score-num {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--safe-green);
+      line-height: 1;
+    }
+
+    .score-label {
+      font-size: 9px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .status-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: var(--safe-green);
+    }
+
+    .latency-tag {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    /* Plain English XAI Cards */
+    .xai-section {
+      margin-bottom: 14px;
+    }
+
+    .section-header {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .xai-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .xai-item {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--safe-green);
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 12px;
+      line-height: 1.4;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .xai-item.DANGER {
+      border-left-color: var(--danger-red);
+      background: var(--danger-bg);
+    }
+
+    .xai-item.WARNING {
+      border-left-color: var(--warn-yellow);
+      background: var(--warn-bg);
+    }
+
+    .xai-item.SAFE {
+      border-left-color: var(--safe-green);
+      background: var(--safe-bg);
+    }
+
+    /* Feature Breakdown Progress Bars */
+    .feature-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 14px;
+    }
+
+    .bar-row {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .bar-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .bar-bg {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #38bdf8, #818cf8);
+      width: 0%;
+      border-radius: 3px;
+      transition: width 0.6s ease;
+    }
+
+    /* Buttons & Audio Alert */
+    .action-btn {
+      width: 100%;
+      padding: 10px;
+      background: linear-gradient(135deg, #0ea5e9, #0284c7);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: opacity 0.2s;
+    }
+
+    .action-btn:hover {
+      opacity: 0.9;
+    }
+
+    .footer {
+      margin-top: 12px;
+      text-align: center;
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="brand">
+      <div class="brand-icon">🛡️</div>
+      <div class="brand-title">SafeURL Shield</div>
+    </div>
+    <div class="privacy-badge">
+      🔒 On-Device XAI
+    </div>
+  </div>
+
+  <!-- Active Tab URL -->
+  <div class="url-card">
+    <div class="url-label">Analyzing Target URL</div>
+    <div class="url-text" id="target-url">Loading page URL...</div>
+  </div>
+
+  <!-- Threat Gauge Meter -->
+  <div class="meter-card">
+    <div class="score-circle" id="score-circle">
+      <div class="score-num" id="score-num">--</div>
+      <div class="score-label">Risk Index</div>
+    </div>
+    <div class="status-title" id="status-title">Analyzing URL...</div>
+    <div class="latency-tag" id="latency-tag">⚡ In-browser ML WASM Execution</div>
+  </div>
+
+  <!-- Plain-English XAI Explanations -->
+  <div class="xai-section">
+    <div class="section-header">
+      <span>💡 Plain-English Explainable AI (XAI)</span>
+      <span style="font-size: 9px; color: #38bdf8;">TreeSHAP Metrics</span>
+    </div>
+    <div class="xai-list" id="xai-list">
+      <div class="xai-item SAFE">
+        <span>🔄</span>
+        <div>Extracting lexical parameters directly on-device...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feature Importance Visual Bars -->
+  <div class="section-header">
+    <span>📊 Feature Impact Matrix</span>
+  </div>
+  <div class="feature-bars" id="feature-bars">
+    <div class="bar-row">
+      <div class="bar-header"><span>IP Address Hostname</span><span id="v0">0%</span></div>
+      <div class="bar-bg"><div class="bar-fill" id="b0"></div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-header"><span>HTTPS Encryption</span><span id="v1">0%</span></div>
+      <div class="bar-bg"><div class="bar-fill" id="b1"></div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-header"><span>Phishing Urgency Keywords</span><span id="v2">0%</span></div>
+      <div class="bar-bg"><div class="bar-fill" id="b2"></div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-header"><span>Subdomain Layering</span><span id="v3">0%</span></div>
+      <div class="bar-bg"><div class="bar-fill" id="b3"></div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-header"><span>Character Entropy</span><span id="v4">0%</span></div>
+      <div class="bar-bg"><div class="bar-fill" id="b4"></div></div>
+    </div>
+  </div>
+
+  <!-- Audio Accessibility Button -->
+  <button class="action-btn" id="audio-btn">
+    🔊 Read Warning Aloud (Voice Alert)
+  </button>
+
+  <div class="footer">
+    SafeURL v1.0.0 • 100% Client-Side Machine Learning • $0 Cloud Infra
+  </div>
+
+  <script src="feature_extractor.js"></script>
+  <script src="xai_engine.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
