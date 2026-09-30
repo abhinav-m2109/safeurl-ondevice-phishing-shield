@@ -1,4 +1,4 @@
-# 🛡️ SafeURL: On-Device AI Phishing Shield with Explainable AI (XAI)
+# 🛡️ SafeURL: On-Device AI Phishing Shield with Explainable AI
 
 > **A Privacy-First, Zero-Latency In-Browser Security Defense System for Everyday & Non-Technical Internet Users.**
 
