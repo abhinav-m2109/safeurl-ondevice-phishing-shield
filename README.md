@@ -119,29 +119,7 @@ Activate your Python virtual environment and run the training script:
 
 ---
 
-## 🌐 Pushing Project to GitHub
 
-To upload this repository to your GitHub account:
-
-```bash
-# 1. Initialize Git repository
-git init
-
-# 2. Add all project files
-git add .
-
-# 3. Commit changes
-git commit -m "Initial commit: SafeURL On-Device AI Phishing Shield with XAI"
-
-# 4. Connect to your GitHub repository (replace with your repo URL)
-git remote add origin https://github.com/YOUR_USERNAME/safeurl-ondevice-phishing-shield.git
-
-# 5. Push code to main branch
-git branch -M main
-git push -u origin main
-```
-
----
 
 ## ⚖️ License & Attribution
 
