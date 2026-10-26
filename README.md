@@ -114,7 +114,7 @@ Activate your Python virtual environment and run the training script:
 1. Open **Google Chrome** and navigate to `chrome://extensions/`.
 2. Enable **Developer mode** toggle in the top right corner.
 3. Click **Load unpacked**.
-4. Select the project directory (`C:\Users\abhin\.gemini\antigravity\scratch\safeurl-ondevice-phishing-shield`).
+4. Select the project directory (`C:\Users\safeurl-ondevice-phishing-shield`).
 5. Pin **SafeURL Shield** to your browser toolbar.
 
 ---
